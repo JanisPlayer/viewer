@@ -40,7 +40,7 @@
 		@load="updateImgSize"
 		@wheel="updateZoom"
 		@dblclick.prevent="onDblclick"
-		@mousedown.prevent="dragStart">
+		@pointerdown.prevent="dragStart">
 </template>
 
 <script>
@@ -136,11 +136,11 @@ export default {
 			// the item was hidden before and is now the current view
 			if (val === true && old === false) {
 				this.resetZoom()
-				// end the dragging if your mouse go out of the content
-				window.addEventListener('mouseout', this.dragEnd)
+				// end the dragging if your pointer (mouse or touch) go out of the content
+				window.addEventListener('pointerout', this.dragEnd)
 			// the item is not displayed
 			} else if (val === false) {
-				window.removeEventListener('mouseout', this.dragEnd)
+				window.removeEventListener('pointerout', this.dragEnd)
 			}
 		},
 	},
@@ -224,15 +224,15 @@ export default {
 			this.dragX = pageX
 			this.dragY = pageY
 			this.dragging = true
-			this.$el.onmouseup = this.dragEnd
-			this.$el.onmousemove = this.dragHandler
+			this.$el.onpointerup = this.dragEnd
+			this.$el.onpointermove = this.dragHandler
 		},
 		dragEnd(event) {
 			event.preventDefault()
 
 			this.dragging = false
-			this.$el.onmouseup = null
-			this.$el.onmousemove = null
+			this.$el.onpointerup = null
+			this.$el.onpointermove = null
 		},
 		dragHandler(event) {
 			event.preventDefault()
