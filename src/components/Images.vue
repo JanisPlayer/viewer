@@ -40,9 +40,9 @@
 		@load="updateImgSize"
 		@wheel.stop.prevent="updateZoom"
 		@dblclick.prevent="onDblclick"
-		@pointerdown.prevent="dragStart"
-		@pointerup.prevent="dragEnd"
-		@pointermove.prevent="dragHandler">
+		@pointerdown.prevent="pointerDown"
+		@pointerup.prevent="pointerUp"
+		@pointermove.prevent="pointerMove">
 </template>
 
 <script>
@@ -144,11 +144,11 @@ export default {
 				this.resetZoom()
 				// end the dragging if your pointer (mouse or touch) go out of the content
 				// Not sure why ???
-				window.addEventListener('pointerout', this.dragEnd)
+				window.addEventListener('pointerout', this.pointerUp)
 			// the item is not displayed
 			} else if (val === false) {
 				// Not sure why ???
-				window.removeEventListener('pointerout', this.dragEnd)
+				window.removeEventListener('pointerout', this.pointerUp)
 			}
 		},
 	},
@@ -245,11 +245,11 @@ export default {
 		// https://developer.mozilla.org/en-US/docs/Web/API/Pointer_events/Pinch_zoom_gestures
 
 		/**
-		 * Dragging handlers
+		 * Dragging and (pinch) zooming handlers
 		 *
 		 * @param {Event} event the event
 		 */
-		dragStart(event) {
+		pointerDown(event) {
 			// New pointer - mouse down or additional touch --> store client coordinates in the pointer cache
 			this.pointerCache.push({ pointerId: event.pointerId, x: event.clientX, y: event.clientY })
 
@@ -269,7 +269,7 @@ export default {
 				this.disableSwipe()
 			}
 		},
-		dragEnd(event) {
+		pointerUp(event) {
 			// Remove pointer from the pointer cache
 			const index = this.pointerCache.findIndex(
 				(cachedEv) => cachedEv.pointerId === event.pointerId,
@@ -278,7 +278,7 @@ export default {
 			this.dragging = false
 			this.zooming = false
 		},
-		dragHandler(event) {
+		pointerMove(event) {
 
 			if (this.pointerCache.length > 0) {
 				// Update pointer position in the pointer cache
